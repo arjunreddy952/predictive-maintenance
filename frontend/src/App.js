@@ -13,11 +13,16 @@ function App() {
   const [latestTemp, setLatestTemp] = useState(0);
   const [alarmPlaying, setAlarmPlaying] = useState(false);
 
-  const audioRef = useRef(new Audio("/alert.mp3"));
+  const audioRef = useRef(null);
+
+  // 🔊 Initialize audio once
+  useEffect(() => {
+    audioRef.current = new Audio("/alert.mp3");
+  }, []);
 
   // 🚨 START ALARM
   const startAlarm = () => {
-    if (!alarmPlaying) {
+    if (!alarmPlaying && audioRef.current) {
       audioRef.current.loop = true;
       audioRef.current.play().catch(() => {});
       setAlarmPlaying(true);
@@ -26,11 +31,14 @@ function App() {
 
   // 🛑 STOP ALARM
   const stopAlarm = () => {
-    audioRef.current.pause();
-    audioRef.current.currentTime = 0;
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
     setAlarmPlaying(false);
   };
 
+  // 📡 API + Sensor Simulation
   useEffect(() => {
     const interval = setInterval(async () => {
       const sensor = {
@@ -45,7 +53,9 @@ function App() {
           sensor
         );
 
-        setPrediction(res.data.prediction);
+        const result = res.data.prediction;
+
+        setPrediction(result);
         setLatestTemp(sensor.temperature);
 
         setTemps((prev) => [
@@ -54,7 +64,7 @@ function App() {
         ]);
 
         // 🚨 ALERT LOGIC
-        if (res.data.prediction === "Failure ⚠️") {
+        if (result === "Failure ⚠️") {
           startAlarm();
         } else {
           stopAlarm();
@@ -66,7 +76,7 @@ function App() {
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [alarmPlaying]);
+  }, []); // ✅ FIXED (no dependency issue)
 
   return (
     <div className={`dashboard ${prediction === "Failure ⚠️" ? "alert-bg" : ""}`}>
@@ -102,7 +112,7 @@ function App() {
         </button>
       )}
 
-      {/* Gauge */}
+      {/* 🔵 Gauge */}
       <div className="gauge">
         <CircularProgressbar
           value={latestTemp}
@@ -112,7 +122,7 @@ function App() {
         <p>Temperature Gauge</p>
       </div>
 
-      {/* Graph */}
+      {/* 📊 Graph */}
       <h3>📊 Temperature Trend</h3>
 
       <LineChart width={600} height={300} data={temps}>
