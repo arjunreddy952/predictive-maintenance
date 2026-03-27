@@ -1,8 +1,5 @@
 const express = require("express");
 const cors = require("cors");
-const { exec } = require("child_process");
-const fs = require("fs");
-const path = require("path");
 
 const app = express();
 
@@ -10,24 +7,29 @@ app.use(cors());
 app.use(express.json());
 
 app.post("/predict", (req, res) => {
-    const inputPath = path.join(__dirname, "input.json");
+  const { temperature, vibration, pressure } = req.body;
 
-    fs.writeFileSync(inputPath, JSON.stringify(req.body));
+  let result;
 
-    exec("python ../ml-model/predict.py", (err, stdout, stderr) => {
-        if (err) {
-            console.error(err);
-            return res.json({ error: "Error running model" });
-        }
+  // 🔥 SIMPLE & RELIABLE LOGIC
+  if (
+    temperature > 110 ||
+    vibration > 1.2 ||
+    pressure > 70
+  ) {
+    result = "Failure ⚠️";
+  } else {
+    result = "Healthy ✅";
+  }
 
-        const result = stdout.trim() === "1"
-            ? "Failure ⚠️"
-            : "Healthy ✅";
+  console.log("DATA:", req.body);
+  console.log("RESULT:", result);
 
-        res.json({ prediction: result });
-    });
+  res.json({ prediction: result });
 });
 
-app.listen(3000, () => {
-    console.log("Server running on port 3000 🚀");
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT} 🚀`);
 });
