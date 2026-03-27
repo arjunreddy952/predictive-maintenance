@@ -41,7 +41,7 @@ function App() {
 
       try {
         const res = await axios.post(
-          "http://localhost:3000/predict",
+          "https://predictive-maintenance-system-nvoa.onrender.com/predict",
           sensor
         );
 
@@ -61,7 +61,7 @@ function App() {
         }
 
       } catch (err) {
-        console.error(err);
+        console.error("API ERROR:", err);
       }
     }, 3000);
 
@@ -128,5 +128,3 @@ function App() {
 }
 
 export default App;
-
-
