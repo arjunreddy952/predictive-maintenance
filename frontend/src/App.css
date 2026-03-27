@@ -1,0 +1,76 @@
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #0f172a;
+  color: white;
+}
+
+.dashboard {
+  text-align: center;
+  padding: 20px;
+}
+
+.title {
+  margin-bottom: 20px;
+}
+
+.cards {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.card {
+  background: #1e293b;
+  padding: 20px;
+  border-radius: 10px;
+  width: 150px;
+}
+
+.safe {
+  color: #22c55e;
+}
+
+.danger {
+  color: #ef4444;
+  animation: blink 1s infinite;
+}
+
+.gauge {
+  width: 200px;
+  margin: 20px auto;
+}
+
+/* 🚨 ALERT BUTTON */
+.stop-btn {
+  background: red;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  margin: 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.stop-btn:hover {
+  background: darkred;
+}
+
+/* 🚨 BLINK TEXT */
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0.3; }
+  100% { opacity: 1; }
+}
+
+/* 🚨 FLASH BACKGROUND */
+.alert-bg {
+  animation: flash 1s infinite;
+}
+
+@keyframes flash {
+  0% { background-color: #0f172a; }
+  50% { background-color: #3b0000; }
+  100% { background-color: #0f172a; }
+}
